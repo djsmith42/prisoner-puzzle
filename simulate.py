@@ -10,17 +10,14 @@ def main():
     histogram = defaultdict(int)
     for _ in xrange(ITERATIONS):
         boxes = generate_boxes(PRISONER_COUNT)
-        prisoners_who_found_their_number = 0
-        for prisoner in range(len(boxes)):
-            if find_prisoner_number(prisoner, boxes):
-                prisoners_who_found_their_number += 1
+        prisoners_who_found_their_number = sum(find_prisoner_number(prisoner, boxes) for prisoner in range(PRISONER_COUNT))
         histogram[prisoners_who_found_their_number] += 1
-        if prisoners_who_found_their_number >= len(boxes)/2:
+        if prisoners_who_found_their_number >= PRISONER_COUNT/2:
             successful_runs += 1
 
     print 'Histogram of successful prisoner counts:'
-    for success_count in range(PRISONER_COUNT):
-        print '{}\t{}'.format(success_count, histogram[success_count])
+    for count in range(PRISONER_COUNT+1):
+        print '{}\t{}'.format(count, histogram[count])
 
     print 'Successful runs: {} of {} ({}%)'.format(successful_runs, ITERATIONS,
             round(float(successful_runs)/float(ITERATIONS)*100, 1))
@@ -39,6 +36,7 @@ def generate_boxes(n):
     seed(datetime.now()) # to ensure nice random box shuffling
     boxes = range(n)
     shuffle(boxes)
+    assert len(set(boxes)) == n
     return boxes
 
 if __name__ == '__main__':
